@@ -1,0 +1,26 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      # Route: /students/** → STUDENT-SERVICE (load balanced)
+      routes:
+        - id: student-service
+          uri: lb://STUDENT-SERVICE
+          predicates:
+            - Path=/students/**
+
+    # Manually register both student-service instances for load balancing
+    loadbalancer:
+      instances:
+        STUDENT-SERVICE:
+          - uri: http://localhost:8081
+          - uri: http://localhost:8082
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
